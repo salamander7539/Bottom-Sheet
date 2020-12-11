@@ -10,8 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Bottom Sheet',
-      theme: ThemeData(
-      ),
+      theme: ThemeData(),
       home: MyHomePage(title: 'Bottom Sheet'),
     );
   }
@@ -27,16 +26,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   _filter() {
     showModalBottomSheet(
-        isScrollControlled: true,
         backgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
-              topLeft: const Radius.circular(20),
-              topRight: const Radius.circular(20),
-            )),
+          topLeft: const Radius.circular(20),
+          topRight: const Radius.circular(20),
+        )),
         context: context,
         builder: (context) {
           return Container(
@@ -52,18 +49,65 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
+  _dragg() {
+    return DraggableScrollableSheet(
+        builder: (BuildContext context, ScrollController scrollController) {
+      return SingleChildScrollView(
+        child: Container(
+          child: ListView.builder(
+              itemCount: 15,
+              controller: scrollController,
+              itemBuilder: (BuildContext context, index) {
+                return ListTile(
+                  title: Text('Item ${index + 1}'),
+                );
+              }),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.0),
+                topRight: Radius.circular(20.0),
+              )),
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: RaisedButton(
-          child: Text('Show'),
-          onPressed:() => _filter(),
+        appBar: AppBar(
+          title: Text(widget.title),
         ),
-      ),
-    );
+        body: Stack(
+          children: <Widget>[
+            Container(
+              color: Colors.grey,
+              width: double.infinity,
+            ),
+            DraggableScrollableSheet(
+                minChildSize: 0.05,
+                initialChildSize: 0.1,
+                maxChildSize: 1.0,
+                builder: (BuildContext context, ScrollController scrollController) {
+              return Container(
+                child: ListView.builder(
+                    itemCount: 15,
+                    controller: scrollController,
+                    itemBuilder: (BuildContext context, index) {
+                      return ListTile(
+                        title: Text('Item ${index + 1}'),
+                      );
+                    }),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20.0),
+                      topRight: Radius.circular(20.0),
+                    )),
+              );
+            }),
+          ],
+        ));
   }
 }
